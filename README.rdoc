@@ -1,0 +1,20 @@
+=Lightview Rails Plugin
+
+This is a simple plugin with helper functions to aid the use of Nick Stakenburg's Lightview in Rails.
+
+The plugin allows you to post forms to a new modal window and open links in a new modal window. It makes use of the 'ajax' method of the Lightview plugin.
+
+
+==Example
+
+  modal_form_for @foo do |f|
+  ...
+  
+  link_to_modal 'Text', :url => new_foo_path
+
+==Todo
+
+* Tests!
+* Add the ability to specify more options (including a title and description)
+
+Copyright (c) 2009 Steve smith, released under the MIT license
