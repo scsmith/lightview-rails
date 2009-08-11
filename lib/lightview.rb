@@ -1,17 +1,33 @@
 module Lightview  
   module HelperMethods
+    
+    # Helper method to create a remote_form_for that that calls Lightview.show() and shows the remote
+    # response within the modal box.
+    #
+    # Note that the request will be a javascript request so use format.js to differntiate from the standard html response
+    #  respond_to do |format|
+    #    format.js {}
+    #  end
     def modal_form_for(record_or_name_or_array, *args, &proc)
       options = args.extract_options!
       options[:modal] ||= true
       remote_form_for(record_or_name_or_array, *(args << options), &proc)
     end
 
+    # Helper method to create a link_to_remote that that calls Lightview.show() and shows the remote
+    # response within the modal box.
+    #
+    # Note that the request will be a javascript request so use format.js to differntiate from the standard html response
+    #  respond_to do |format|
+    #    format.js {}
+    #  end
     def link_to_modal(name, options = {}, html_options = nil)
       options[:modal] ||= true
       options[:method] ||= :get
-      link_to_remote(name, options, html_options)
+      link_to_remote_with_href_from_url(name, options, html_options)
     end
     
+    # Helper method to create a standard link that calls Lightview.hide() when clicked
     def link_to_close_modal(*args, &proc)
       if block_given?
         options      = args.first || {}
@@ -37,6 +53,21 @@ module Lightview
       end
     end
     
+    # Extends link_to_remote so that it includes the url in its href field instead of #
+    def link_to_remote_with_href_from_url(name, options = {}, html_options = nil)
+      # set the href manually so that its the link not # and non js users will follow link
+      # this should maybe be removed from the library and be set in an application specific way?
+      # why does rails not use this by default?
+      html_options ||= {}
+      html_options[:href] ||= options[:url]
+      link_to_remote(name, options, html_options)
+    end
+    
+    # Extends the standard remote_function to make a request to a modal window and pass ajax options
+    # as params to the ajax section of Lightview.show() javascript.
+    # Most of this method comes from remote_function and the method is only called if the option
+    #   :modal => true is passed
+    # todo: add the ability to set different options here instead of in the js file for ajax
     def remote_function_with_modal(options)
       return remote_function_without_modal(options) unless options[:modal] == true
       
