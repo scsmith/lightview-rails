@@ -1,6 +1,5 @@
 module Lightview  
   module HelperMethods
-    
     # Helper method to create a remote_form_for that that calls Lightview.show() and shows the remote
     # response within the modal box.
     #
@@ -27,6 +26,16 @@ module Lightview
       link_to_remote_with_href_from_url(name, options, html_options)
     end
     
+    # Extends link_to_remote so that it includes the url in its href field instead of #
+    def link_to_remote_with_href_from_url(name, options = {}, html_options = nil)
+      # set the href manually so that its the link not # and non js users will follow link
+      # this should maybe be removed from the library and be set in an application specific way?
+      # why does rails not use this by default?
+      html_options ||= {}
+      html_options[:href] ||= options[:url]
+      link_to_remote(name, options, html_options)
+    end
+    
     # Helper method to create a standard link that calls Lightview.hide() when clicked
     def link_to_close_modal(*args, &proc)
       if block_given?
@@ -51,16 +60,6 @@ module Lightview
       klass.class_eval do
         alias_method_chain :remote_function, :modal
       end
-    end
-    
-    # Extends link_to_remote so that it includes the url in its href field instead of #
-    def link_to_remote_with_href_from_url(name, options = {}, html_options = nil)
-      # set the href manually so that its the link not # and non js users will follow link
-      # this should maybe be removed from the library and be set in an application specific way?
-      # why does rails not use this by default?
-      html_options ||= {}
-      html_options[:href] ||= options[:url]
-      link_to_remote(name, options, html_options)
     end
     
     # Extends the standard remote_function to make a request to a modal window and pass ajax options
